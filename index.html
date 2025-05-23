@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ยาเบื่อหนู</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐭</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Athiti:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Athiti', 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        .main-content-area {
+            background-color: #ffffff;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        h1 {
+            color: #2d3748;
+            margin-bottom: 24px;
+            font-size: 2.25rem;
+            font-weight: bold;
+        }
+		.bigf{
+            color: darkblue;
+            font-size: 2.25rem;
+            font-weight: bold;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a5568;
+        }
+        input[type="file"],
+        input[type="text"] { /* General text input styling */
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            color: #2d3748;
+            transition: border-color 0.2s ease-in-out;
+        }
+        input[type="file"]:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 24px;
+        }
+        .bbb {
+          display: block;
+          width: 100%;
+          border: none;
+          background-color: #04AA6D;
+          padding: 14px 28px;
+          font-size: 1rem;
+          cursor: pointer;
+          text-align: center;
+          border-radius: 8px;
+        }
+        button {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        button.primary {
+            background-image: linear-gradient(to right, #6366f1, #8b5cf6);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+        }
+        button.primary:hover:not(:disabled) {
+            background-image: linear-gradient(to right, #4f46e5, #7c3aed);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4);
+        }
+        button.secondary {
+            background-color: #f7dd72;
+            color: #4a5568;
+            border: 1px solid #cbd5e0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        button.secondary:hover:not(:disabled) {
+            background-color: #f3ca40;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        #ownerInputsContainer {
+            margin-top: 20px;
+            padding: 16px;
+            border: 1px dashed #cbd5e0;
+            border-radius: 8px;
+            background-color: #f8fafc;
+        }
+        .owner-input-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .owner-input-row:last-child {
+            margin-bottom: 0;
+        }
+        .owner-input-row input {
+            flex-grow: 1;
+        }
+        .owner-input-row button {
+            padding: 8px 12px;
+            font-size: 0.875rem;
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(239, 68, 68, 0.2);
+        }
+        .owner-input-row button:hover:not(:disabled) {
+            background-color: #dc2626;
+            box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+        }
+        #messageArea {
+            margin-top: 24px;
+            padding: 16px;
+            border-radius: 8px;
+            background-color: #e0f2fe;
+            color: #0c4a6e;
+            text-align: left;
+            font-size: 0.95rem;
+            border: 1px solid #90cdf4;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #messageArea.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-color: #fca5a5;
+        }
+        #loadingSpinner { /* Main loading spinner for EPUB processing */
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #6366f1;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* PIN Entry Styles */
+        #pinEntryScreen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* Center content vertically */
+            width: 100%;
+            max-width: 380px;
+            min-height: 150px; /* Ensure some height for spinner */
+            padding: 32px;
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            position: relative; /* For absolute positioning of spinner */
+        }
+        /* REMOVED h2 for PIN screen */
+        #pinInputsContainer {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px; /* Keep some margin if spinner is below */
+        }
+        .pin-input { /* Now type="password" */
+            width: 48px;
+            height: 56px;
+            text-align: center;
+            font-size: 1.75rem; /* Will show dots/asterisks at this size */
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            color: #2d3748;
+            caret-color: #6366f1;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .pin-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        /* REMOVED #pinMessage styles */
+        #pinLoadingSpinner { /* Spinner for PIN verification */
+            border: 5px solid #f3f3f3; /* Slightly thicker */
+            border-top: 5px solid #4f46e5; /* Accent color */
+            border-radius: 50%;
+            width: 50px; /* Larger spinner */
+            height: 50px;
+            animation: spin 1s linear infinite;
+            /* Centering logic handled by JS or if it's the only child */
+            display: none; /* Hidden by default, shown on correct PIN */
+            margin: 20px auto; /* Add some margin when visible */
+        }
+        .pin-inputs-hidden #pinInputsContainer { /* Class to hide inputs when spinner shows */
+            display: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="pinEntryScreen">
+        <div id="pinInputsContainer">
+            <input type="password" class="pin-input" maxlength="1" data-index="0">
+            <input type="password" class="pin-input" maxlength="1" data-index="1">
+            <input type="password" class="pin-input" maxlength="1" data-index="2">
+            <input type="password" class="pin-input" maxlength="1" data-index="3">
+            <input type="password" class="pin-input" maxlength="1" data-index="4">
+            <input type="password" class="pin-input" maxlength="1" data-index="5">
+        </div>
+        <div id="pinLoadingSpinner"></div> </div>
+
+    <div class="main-content-area hidden" id="epubProcessingSection">
+        <h1 class="bigf">ยาเบื่อหนู</h1>
+        <p><br></p>
+        <div class="form-group">
+            <input type="file" id="epubFile" accept=".epub">
+        </div>
+
+        <div class="form-group">
+            <div id="ownerInputsContainer">
+                </div>
+            <button id="addOwnerBtn" class="secondary w-full mt-4 bbb">เพิ่มชื่อสมาชิก</button>
+        </div>
+
+        <div class="button-group">
+            <button id="processBtn" class="primary bbb">Process EPUB</button>
+        </div>
+
+        <div id="loadingSpinner"></div> <div id="messageArea">
+            Upload an EPUB file and add ชื่อสมาชิก to personalize your books.
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- PIN Entry Logic ---
+            const pinEntryScreen = document.getElementById('pinEntryScreen');
+            const epubProcessingSection = document.getElementById('epubProcessingSection');
+            const pinInputsContainer = document.getElementById('pinInputsContainer');
+            const pinInputs = Array.from(pinInputsContainer.querySelectorAll('.pin-input'));
+            const pinLoadingSpinner = document.getElementById('pinLoadingSpinner'); // Spinner for PIN page
+            const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbyb3b9e1oLf2PycZI6YvJN1uR1Ga5zOW3cSeFsiPo5H437qaBmAAu-AMrkCxGWKHPsf/exec';
+            let correctPin = null;
+
+            async function fetchPin() {
+                pinInputsContainer.style.display = 'flex'; // Ensure inputs are visible initially
+                pinLoadingSpinner.style.display = 'none';
+                pinInputs.forEach(input => input.disabled = true);
+                try {
+                    const response = await fetch(googleScriptUrl);
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const data = await response.json();
+                    if (data.pin) {
+                        correctPin = data.pin.toString();
+                        console.log('Correct PIN fetched:', correctPin);
+                        pinInputs.forEach(input => input.disabled = false);
+                        if (pinInputs.length > 0) pinInputs[0].focus();
+                    } else {
+                        throw new Error('PIN not found in response.');
+                    }
+                } catch (error) {
+                    console.error('Error fetching PIN:', error);
+                    // No #pinMessage to update, error logged to console. Inputs remain disabled.
+                }
+            }
+
+            pinInputs.forEach(input => {
+                input.addEventListener('input', (e) => {
+                    let value = e.target.value;
+                    const index = parseInt(e.target.dataset.index);
+
+                    // For type="password" and maxlength="1", value will be the single char
+                    // We still want to ensure it's a digit if that's the requirement for the PIN
+                    if (value && !/^\d$/.test(value)) {
+                        e.target.value = ''; // Clear if not a digit
+                        return; // Stop processing if input is invalid
+                    }
+
+                    if (e.target.value && index < pinInputs.length - 1) {
+                        pinInputs[index + 1].focus();
+                    }
+                    checkPin();
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    const index = parseInt(e.target.dataset.index);
+                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                        pinInputs[index - 1].focus();
+                    } else if (e.key === 'ArrowLeft' && index > 0) {
+                        pinInputs[index - 1].focus();
+                    } else if (e.key === 'ArrowRight' && index < pinInputs.length - 1) {
+                        pinInputs[index + 1].focus();
+                    }
+                });
+                 // No keypress listener needed as type="password" handles masking
+                 // and input event handles digit validation
+            });
+
+            function checkPin() {
+                const enteredPin = pinInputs.map(input => input.value).join('');
+                // console.log('Checking PIN. Entered:', enteredPin, 'Correct:', correctPin);
+
+                if (enteredPin.length === 6) {
+                    // console.log('Entered PIN is 6 digits.');
+                    if (correctPin === null) {
+                        console.log('Correct PIN is null, waiting for fetch.');
+                        return; // Should not happen if fetchPin completes and enables inputs
+                    }
+                    // console.log(`Comparing enteredPin ("${enteredPin}") with correctPin ("${correctPin}")`);
+
+                    if (enteredPin === correctPin) {
+                        console.log('PIN MATCHES!');
+                        pinInputs.forEach(input => input.disabled = true);
+                        pinInputsContainer.style.display = 'none'; // Hide input boxes
+                        pinLoadingSpinner.style.display = 'block'; // Show loading spinner
+
+                        setTimeout(() => {
+                            // console.log('Attempting to transition: Hiding PIN screen, Showing EPUB section.');
+                            pinEntryScreen.classList.add('hidden');
+                            epubProcessingSection.classList.remove('hidden');
+                            // console.log('PIN screen hidden:', pinEntryScreen.classList.contains('hidden'));
+                            // console.log('EPUB section visible:', !epubProcessingSection.classList.contains('hidden'));
+                            initializeEpubProcessor();
+                        }, 1000); // Increased delay for spinner visibility
+                    } else {
+                        console.log('PIN DOES NOT MATCH.');
+                        pinInputs.forEach(input => input.value = ''); // Clear inputs
+                        if (pinInputs.length > 0) pinInputs[0].focus();
+                        // No visual error message as per request
+                    }
+                }
+            }
+
+            fetchPin();
+
+            // --- EPUB Processing Logic ---
+            let epubInitialized = false;
+            function initializeEpubProcessor() {
+                if (epubInitialized) { /* console.log("EPUB Processor already initialized."); */ return; }
+                // console.log("Initializing EPUB Processor...");
+
+                const epubFileInput = document.getElementById('epubFile');
+                const ownerInputsContainer = document.getElementById('ownerInputsContainer');
+                const addOwnerBtn = document.getElementById('addOwnerBtn');
+                const processBtn = document.getElementById('processBtn');
+                const messageArea = document.getElementById('messageArea');
+                const loadingSpinner = document.getElementById('loadingSpinner'); // Main spinner for EPUB processing
+
+                let ownerCount = 2;
+
+                function showMessage(message, isError = false) {
+                    messageArea.textContent = message;
+                    messageArea.className = 'message-area';
+                    if (isError) messageArea.classList.add('error');
+                }
+
+                function setLoading(isLoading) {
+                    const epubControls = [processBtn, addOwnerBtn, epubFileInput, ...ownerInputsContainer.querySelectorAll('input, button')];
+                    epubControls.forEach(control => control.disabled = isLoading);
+                    loadingSpinner.style.display = isLoading ? 'block' : 'none';
+                    if (isLoading) showMessage('Processing EPUB, please wait...');
+                }
+
+                function addOwnerInput(name = '') {
+                    const ownerInputRow = document.createElement('div');
+                    ownerInputRow.className = 'owner-input-row';
+                    ownerInputRow.dataset.index = ownerInputsContainer.children.length;
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.placeholder = `ชื่อสมาชิก ${parseInt(ownerInputRow.dataset.index) + 1}`;
+                    input.value = name;
+                    input.className = 'owner-name-input';
+                    input.required = true;
+                    const removeBtn = document.createElement('button');
+                    removeBtn.textContent = 'Remove';
+                    Object.assign(removeBtn.style, { padding: '8px 12px', fontSize: '0.875rem', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '8px', boxShadow: '0 2px 5px rgba(239, 68, 68, 0.2)', cursor: 'pointer' });
+                    removeBtn.onmouseover = () => { if (!removeBtn.disabled) { removeBtn.style.backgroundColor = '#dc2626'; removeBtn.style.boxShadow = '0 4px 8px rgba(239, 68, 68, 0.3)'; } };
+                    removeBtn.onmouseout = () => { if (!removeBtn.disabled) { removeBtn.style.backgroundColor = '#ef4444'; removeBtn.style.boxShadow = '0 2px 5px rgba(239, 68, 68, 0.2)'; } };
+                    removeBtn.onclick = () => { ownerInputRow.remove(); updateOwnerInputPlaceholders(); };
+                    ownerInputRow.appendChild(input);
+                    ownerInputRow.appendChild(removeBtn);
+                    ownerInputsContainer.appendChild(ownerInputRow);
+                    updateRemoveButtonsVisibility();
+                }
+
+                function updateOwnerInputPlaceholders() {
+                    Array.from(ownerInputsContainer.children).forEach((row, i) => {
+                        row.dataset.index = i;
+                        const input = row.querySelector('.owner-name-input');
+                        if (input) input.placeholder = `ชื่อสมาชิก ${i + 1}`;
+                    });
+                    updateRemoveButtonsVisibility();
+                }
+
+                function updateRemoveButtonsVisibility() {
+                    const removeButtons = ownerInputsContainer.querySelectorAll('.owner-input-row button');
+                    const show = ownerInputsContainer.children.length > 1;
+                    removeButtons.forEach(btn => btn.style.display = show ? 'inline-block' : 'none');
+                }
+
+                if (ownerInputsContainer.children.length === 0) {
+                    for (let i = 0; i < ownerCount; i++) addOwnerInput();
+                }
+
+                addOwnerBtn.addEventListener('click', () => addOwnerInput());
+
+                processBtn.addEventListener('click', async () => {
+                    const file = epubFileInput.files[0];
+                    if (!file) { showMessage('Please select an EPUB file.', true); return; }
+                    const ownerNames = Array.from(ownerInputsContainer.querySelectorAll('.owner-name-input'))
+                                            .map(input => input.value.trim()).filter(name => name !== '');
+                    if (ownerNames.length === 0) { showMessage('กรุณาใส่อย่างน้อย 1 ชื่อ', true); return; }
+                    setLoading(true);
+                    try {
+                        const reader = new FileReader();
+                        reader.onload = async (e) => {
+                            try {
+                                const fileContent = e.target.result;
+                                const originalFileName = file.name.split('.').slice(0, -1).join('.');
+                                const zip = new JSZip();
+                                await zip.loadAsync(fileContent);
+                                const htmlXhtmlFiles = [];
+                                zip.forEach((relativePath, zipEntry) => {
+                                    if (!zipEntry.dir && (relativePath.endsWith('.html') || relativePath.endsWith('.xhtml'))) {
+                                        htmlXhtmlFiles.push(relativePath);
+                                    }
+                                });
+                                if (htmlXhtmlFiles.length === 0) {
+                                    showMessage('No HTML/XHTML files found in the EPUB. Cannot personalize.', true);
+                                    setLoading(false); return;
+                                }
+                                const logEntries = [];
+                                const processedEpubs = [];
+                                for (let i = 0; i < ownerNames.length; i++) {
+                                    const ownerName = ownerNames[i];
+                                    const dotPattern = '.'.repeat(i + 3);
+                                    // SIMPLIFIED personalizedContent style
+                                    const personalizedContent = `<p style="text-align: center;visibility: hidden;">${dotPattern}</p>`;
+                                    const randomPageIndex = Math.floor(Math.random() * htmlXhtmlFiles.length);
+                                    const targetHtmlFile = htmlXhtmlFiles[randomPageIndex];
+                                    logEntries.push(`${ownerName} - ${personalizedContent} - [${targetHtmlFile}]`);
+                                    const ownerZip = new JSZip();
+                                    const filePromises = [];
+                                    zip.forEach((relativePath, zipEntry) => {
+                                        filePromises.push(
+                                            (async () => {
+                                                if (relativePath === targetHtmlFile) {
+                                                    const content = await zipEntry.async('text');
+                                                    const modifiedContent = content.replace(/<\/\s*body\s*>/i, `${personalizedContent}\n</body>`);
+                                                    ownerZip.file(relativePath, modifiedContent);
+                                                } else {
+                                                    if (zipEntry.dir) {}
+                                                    else if (relativePath === 'mimetype') { ownerZip.file(relativePath, await zipEntry.async('text'), { compression: 'STORE' }); }
+                                                    else if (relativePath.match(/\.(jpe?g|png|gif|bmp|tiff|webp|ico|mp3|mp4|ogg|webm|pdf|eot|ttf|woff|woff2)$/i)) { ownerZip.file(relativePath, await zipEntry.async('arraybuffer')); }
+                                                    else { ownerZip.file(relativePath, await zipEntry.async('text')); }
+                                                }
+                                            })()
+                                        );
+                                    });
+                                    await Promise.all(filePromises);
+                                    const newEpubBlob = await ownerZip.generateAsync({ type: "blob", mimeType: "application/epub+zip", compression: "DEFLATE", compressionOptions: { level: 9 } });
+                                    processedEpubs.push({ name: `${originalFileName}_${ownerName}.epub`, blob: newEpubBlob });
+                                }
+                                processedEpubs.forEach(epub => saveAs(epub.blob, epub.name));
+                                const logBlob = new Blob([logEntries.join('\n')], { type: 'text/plain;charset=utf-8' });
+                                saveAs(logBlob, `${originalFileName}_log.txt`);
+                                showMessage(`Successfully processed EPUBs for ${ownerNames.length} owners and generated log file!`);
+                            } catch (asyncError) {
+                                console.error('Error during async EPUB processing steps:', asyncError);
+                                showMessage(`An error occurred during EPUB content processing: ${asyncError.message}`, true);
+                            } finally {
+                                setLoading(false);
+                            }
+                        };
+                        reader.onerror = () => { showMessage('Error reading file. Please try again.', true); setLoading(false); };
+                        reader.readAsArrayBuffer(file);
+                    } catch (error) {
+                        console.error('Error setting up EPUB processing:', error);
+                        showMessage(`An unexpected error occurred: ${error.message}`, true);
+                        setLoading(false);
+                    }
+                });
+                epubInitialized = true;
+                // console.log("EPUB Processor Initialized successfully.");
+            }
+        });
+    </script>
+</body>
+</html>
