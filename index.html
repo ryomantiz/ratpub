@@ -209,17 +209,16 @@
             border: 1px solid #e2e8f0;
             position: relative; /* For absolute positioning of spinner */
         }
-        /* REMOVED h2 for PIN screen */
         #pinInputsContainer {
             display: flex;
             gap: 10px;
-            margin-bottom: 20px; /* Keep some margin if spinner is below */
+            margin-bottom: 20px;
         }
-        .pin-input { /* Now type="password" */
+        .pin-input {
             width: 48px;
             height: 56px;
             text-align: center;
-            font-size: 1.75rem; /* Will show dots/asterisks at this size */
+            font-size: 1.75rem;
             border: 1px solid #cbd5e0;
             border-radius: 8px;
             color: #2d3748;
@@ -231,19 +230,17 @@
             border-color: #6366f1;
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
         }
-        /* REMOVED #pinMessage styles */
-        #pinLoadingSpinner { /* Spinner for PIN verification */
-            border: 5px solid #f3f3f3; /* Slightly thicker */
-            border-top: 5px solid #4f46e5; /* Accent color */
+        #pinLoadingSpinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #4f46e5;
             border-radius: 50%;
-            width: 50px; /* Larger spinner */
+            width: 50px;
             height: 50px;
             animation: spin 1s linear infinite;
-            /* Centering logic handled by JS or if it's the only child */
-            display: none; /* Hidden by default, shown on correct PIN */
-            margin: 20px auto; /* Add some margin when visible */
+            display: none;
+            margin: 20px auto;
         }
-        .pin-inputs-hidden #pinInputsContainer { /* Class to hide inputs when spinner shows */
+        .pin-inputs-hidden #pinInputsContainer { /* No longer used directly by JS, but kept if needed for CSS states */
             display: none;
         }
 
@@ -262,7 +259,8 @@
             <input type="password" class="pin-input" maxlength="1" data-index="4">
             <input type="password" class="pin-input" maxlength="1" data-index="5">
         </div>
-        <div id="pinLoadingSpinner"></div> </div>
+        <div id="pinLoadingSpinner"></div>
+    </div>
 
     <div class="main-content-area hidden" id="epubProcessingSection">
         <h1 class="bigf">ยาเบื่อหนู</h1>
@@ -281,7 +279,8 @@
             <button id="processBtn" class="primary bbb">Process EPUB</button>
         </div>
 
-        <div id="loadingSpinner"></div> <div id="messageArea">
+        <div id="loadingSpinner"></div>
+        <div id="messageArea">
             Upload an EPUB file and add ชื่อสมาชิก to personalize your books.
         </div>
     </div>
@@ -291,53 +290,73 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- PIN Entry Logic ---
             const pinEntryScreen = document.getElementById('pinEntryScreen');
             const epubProcessingSection = document.getElementById('epubProcessingSection');
             const pinInputsContainer = document.getElementById('pinInputsContainer');
             const pinInputs = Array.from(pinInputsContainer.querySelectorAll('.pin-input'));
-            const pinLoadingSpinner = document.getElementById('pinLoadingSpinner'); // Spinner for PIN page
+            const pinLoadingSpinner = document.getElementById('pinLoadingSpinner');
             const googleScriptUrl = 'https://script.google.com/macros/s/AKfycbyb3b9e1oLf2PycZI6YvJN1uR1Ga5zOW3cSeFsiPo5H437qaBmAAu-AMrkCxGWKHPsf/exec';
-            let correctPin = null;
+            let correctPin = null; // Will store the fetched PIN
 
+            // Ensure PIN inputs are enabled and the first one is focused immediately
+            pinInputs.forEach(input => input.disabled = false);
+            if (pinInputs.length > 0) {
+                pinInputs[0].focus();
+            }
+
+            // Asynchronously fetch the correct PIN
             async function fetchPin() {
-                pinInputsContainer.style.display = 'flex'; // Ensure inputs are visible initially
-                pinLoadingSpinner.style.display = 'none';
-                pinInputs.forEach(input => input.disabled = true);
+                // console.log("Attempting to fetch PIN...");
                 try {
                     const response = await fetch(googleScriptUrl);
-                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    if (!response.ok) {
+                        console.error(`HTTP error fetching PIN! status: ${response.status}`);
+                        // correctPin remains null, login will not succeed if user enters a PIN.
+                        // Optionally, provide user feedback about the fetch error here.
+                        return;
+                    }
                     const data = await response.json();
                     if (data.pin) {
                         correctPin = data.pin.toString();
-                        console.log('Correct PIN fetched:', correctPin);
-                        pinInputs.forEach(input => input.disabled = false);
-                        if (pinInputs.length > 0) pinInputs[0].focus();
+                        // console.log('Correct PIN fetched:', correctPin);
+
+                        // If a 6-digit PIN was already entered while we were fetching, process it now.
+                        const currentlyEnteredPin = pinInputs.map(input => input.value).join('');
+                        if (currentlyEnteredPin.length === 6) {
+                            processPinComparison(currentlyEnteredPin);
+                        }
                     } else {
-                        throw new Error('PIN not found in response.');
+                        console.error('PIN not found in API response.');
+                        // correctPin remains null.
                     }
                 } catch (error) {
                     console.error('Error fetching PIN:', error);
-                    // No #pinMessage to update, error logged to console. Inputs remain disabled.
+                    // correctPin remains null.
                 }
             }
+
+            // Start fetching the PIN in the background
+            fetchPin();
 
             pinInputs.forEach(input => {
                 input.addEventListener('input', (e) => {
                     let value = e.target.value;
                     const index = parseInt(e.target.dataset.index);
 
-                    // For type="password" and maxlength="1", value will be the single char
-                    // We still want to ensure it's a digit if that's the requirement for the PIN
-                    if (value && !/^\d$/.test(value)) {
-                        e.target.value = ''; // Clear if not a digit
-                        return; // Stop processing if input is invalid
+                    if (value && !/^\d$/.test(value)) { // Ensure only digits
+                        e.target.value = '';
+                        return;
                     }
 
                     if (e.target.value && index < pinInputs.length - 1) {
                         pinInputs[index + 1].focus();
                     }
-                    checkPin();
+
+                    // Check if the full PIN has been entered
+                    const enteredPin = pinInputs.map(inp => inp.value).join('');
+                    if (enteredPin.length === 6) {
+                        processPinComparison(enteredPin);
+                    }
                 });
 
                 input.addEventListener('keydown', (e) => {
@@ -350,51 +369,49 @@
                         pinInputs[index + 1].focus();
                     }
                 });
-                 // No keypress listener needed as type="password" handles masking
-                 // and input event handles digit validation
             });
 
-            function checkPin() {
-                const enteredPin = pinInputs.map(input => input.value).join('');
-                // console.log('Checking PIN. Entered:', enteredPin, 'Correct:', correctPin);
+            function processPinComparison(enteredPin) {
+                // If correctPin is not yet fetched, do nothing yet.
+                // fetchPin, upon completion, will call this function if a 6-digit PIN was already present.
+                if (correctPin === null) {
+                    // console.log('User entered 6 digits, but correct PIN is still being fetched (or fetch failed). Waiting...');
+                    return;
+                }
 
-                if (enteredPin.length === 6) {
-                    // console.log('Entered PIN is 6 digits.');
-                    if (correctPin === null) {
-                        console.log('Correct PIN is null, waiting for fetch.');
-                        return; // Should not happen if fetchPin completes and enables inputs
-                    }
-                    // console.log(`Comparing enteredPin ("${enteredPin}") with correctPin ("${correctPin}")`);
+                // correctPin is available, proceed with comparison and UI changes.
+                pinInputs.forEach(input => input.disabled = true); // Disable inputs during processing
+                pinInputsContainer.style.display = 'none';       // Hide input fields
+                pinLoadingSpinner.style.display = 'block';       // Show spinner
 
-                    if (enteredPin === correctPin) {
-                        console.log('PIN MATCHES!');
-                        pinInputs.forEach(input => input.disabled = true);
-                        pinInputsContainer.style.display = 'none'; // Hide input boxes
-                        pinLoadingSpinner.style.display = 'block'; // Show loading spinner
-
-                        setTimeout(() => {
-                            // console.log('Attempting to transition: Hiding PIN screen, Showing EPUB section.');
-                            pinEntryScreen.classList.add('hidden');
-                            epubProcessingSection.classList.remove('hidden');
-                            // console.log('PIN screen hidden:', pinEntryScreen.classList.contains('hidden'));
-                            // console.log('EPUB section visible:', !epubProcessingSection.classList.contains('hidden'));
-                            initializeEpubProcessor();
-                        }, 1000); // Increased delay for spinner visibility
-                    } else {
-                        console.log('PIN DOES NOT MATCH.');
-                        pinInputs.forEach(input => input.value = ''); // Clear inputs
+                if (enteredPin === correctPin) {
+                    // console.log('PIN MATCHES!');
+                    // Spinner is already showing. Transition after a short delay.
+                    setTimeout(() => {
+                        pinEntryScreen.classList.add('hidden');
+                        epubProcessingSection.classList.remove('hidden');
+                        initializeEpubProcessor();
+                        // pinLoadingSpinner will be hidden when pinEntryScreen is hidden.
+                    }, 1000); // Delay for spinner visibility
+                } else {
+                    // console.log('PIN DOES NOT MATCH.');
+                    // Spinner is showing. Revert to input state after a short delay.
+                    setTimeout(() => {
+                        pinLoadingSpinner.style.display = 'none';
+                        pinInputsContainer.style.display = 'flex';
+                        pinInputs.forEach(input => {
+                            input.value = '';
+                            input.disabled = false; // Re-enable inputs
+                        });
                         if (pinInputs.length > 0) pinInputs[0].focus();
-                        // No visual error message as per request
-                    }
+                    }, 500); // Shorter delay for error feedback
                 }
             }
 
-            fetchPin();
-
-            // --- EPUB Processing Logic ---
+            // --- EPUB Processing Logic (initializeEpubProcessor and related functions) ---
             let epubInitialized = false;
             function initializeEpubProcessor() {
-                if (epubInitialized) { /* console.log("EPUB Processor already initialized."); */ return; }
+                if (epubInitialized) return;
                 // console.log("Initializing EPUB Processor...");
 
                 const epubFileInput = document.getElementById('epubFile');
@@ -402,8 +419,7 @@
                 const addOwnerBtn = document.getElementById('addOwnerBtn');
                 const processBtn = document.getElementById('processBtn');
                 const messageArea = document.getElementById('messageArea');
-                const loadingSpinner = document.getElementById('loadingSpinner'); // Main spinner for EPUB processing
-
+                const loadingSpinner = document.getElementById('loadingSpinner');
                 let ownerCount = 2;
 
                 function showMessage(message, isError = false) {
@@ -492,18 +508,25 @@
                                 for (let i = 0; i < ownerNames.length; i++) {
                                     const ownerName = ownerNames[i];
                                     const dotPattern = '.'.repeat(i + 3);
-                                    // SIMPLIFIED personalizedContent style
-                                    const personalizedContent = `<p style="text-align: center;visibility: hidden;">${dotPattern}</p>`;
+                                    const personalizedContent = `<p class="dot_">${dotPattern}</p>`;
                                     const randomPageIndex = Math.floor(Math.random() * htmlXhtmlFiles.length);
                                     const targetHtmlFile = htmlXhtmlFiles[randomPageIndex];
-                                    logEntries.push(`${ownerName} - ${personalizedContent} - [${targetHtmlFile}]`);
+                                    logEntries.push(`${ownerName} - <p class="dot_">${dotPattern}</p> - [${targetHtmlFile}]`);
                                     const ownerZip = new JSZip();
                                     const filePromises = [];
                                     zip.forEach((relativePath, zipEntry) => {
                                         filePromises.push(
                                             (async () => {
                                                 if (relativePath === targetHtmlFile) {
-                                                    const content = await zipEntry.async('text');
+                                                    let content = await zipEntry.async('text');
+                                                    const styleDefinition = '<style> .dot_{visibility: hidden;}</style>';
+                                                    if (content.includes('</head>')) {
+                                                        content = content.replace('</head>', `${styleDefinition}\n</head>`);
+                                                    } else if (content.includes('<body')) {
+                                                        content = content.replace('<body', `${styleDefinition}\n<body`);
+                                                    } else {
+                                                        content = styleDefinition + '\n' + content;
+                                                    }
                                                     const modifiedContent = content.replace(/<\/\s*body\s*>/i, `${personalizedContent}\n</body>`);
                                                     ownerZip.file(relativePath, modifiedContent);
                                                 } else {
@@ -520,7 +543,10 @@
                                     processedEpubs.push({ name: `${originalFileName}_${ownerName}.epub`, blob: newEpubBlob });
                                 }
                                 processedEpubs.forEach(epub => saveAs(epub.blob, epub.name));
-                                const logBlob = new Blob([logEntries.join('\n')], { type: 'text/plain;charset=utf-8' });
+                                const logHeader = "You can verify the owner of an EPUB file by comparing the HTML name and the number of dots within the EPUB file to the names listed in this document. To do this, search for the HTML class <p class=\"dot_\"> within the EPUB file.";
+                                const logSeparator = "************************";
+                                const logFileContent = `${logHeader}\n${logSeparator}\n${logEntries.join('\n')}`;
+                                const logBlob = new Blob([logFileContent], { type: 'text/plain;charset=utf-8' });
                                 saveAs(logBlob, `${originalFileName}_log.txt`);
                                 showMessage(`Successfully processed EPUBs for ${ownerNames.length} owners and generated log file!`);
                             } catch (asyncError) {
@@ -540,8 +566,8 @@
                 });
                 epubInitialized = true;
                 // console.log("EPUB Processor Initialized successfully.");
-            }
-        });
+            } // End of initializeEpubProcessor
+        }); // End of DOMContentLoaded
     </script>
 </body>
 </html>
